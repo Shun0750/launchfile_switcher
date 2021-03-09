@@ -9,7 +9,7 @@ Build as standard catkin packages. There are no special dependencies needed.
 ## launchfile_switcher
 ### Subscribed Topics
 
-- /mode (std_msgs/String)
+- /mode (std_msgs/String)  
 This topic indicates the next mode name. Modes can be defined in a yaml file (an example is below).
 
 
@@ -81,6 +81,6 @@ make_map
 ### launch file sample
 ```
   <node pkg="launchfile_switcher" type="launchfile_switcher" name="launchfile_switcher" output="screen">
-    <param file="$(find your_package)/config/mode_list.yaml" command="load" />
+    <rosparam file="$(find your_package)/config/mode_list.yaml" command="load" />
   </node>
 ```
