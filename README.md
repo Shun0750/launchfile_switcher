@@ -78,6 +78,23 @@ make_map
   </include>
 ```
 
+### Switch launch files
+You can switch launchfile sending mode name topic.
+```
+rostopic pub -r 10 /mode std_msgs/String  'make_map'
+```
+will kill all existing nodes and launch the file below:
+```
+  <include file="$(find your_robot_package)/launch/your_robot_start.launch">
+    <arg name="mode" value="single_camera"/>
+    <arg name="is_device" value="false"/>
+  </include>
+  <include file="$(find your_navigation_package)/launch/your_navigation_start.launch">
+    <arg name="mode" value="single_camera"/>
+    <arg name="explore" value="true"/>
+  </include>
+```
+
 ### launch file sample
 ```
   <node pkg="launchfile_switcher" type="launchfile_switcher" name="launchfile_switcher" output="screen">

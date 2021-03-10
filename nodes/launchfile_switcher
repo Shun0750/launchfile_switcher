@@ -32,12 +32,10 @@ import rospkg
 
 from std_msgs.msg import String
 import re
+from copy import copy
 
 mode_list = rospy.get_param('/launchfile_switcher/mode_list')
-keeping_node_patterns = [re.compile("\/?launchfile_switcher"),
-                         re.compile("\/?rosout"), re.compile("\/?rviz.*"
-                         ), re.compile("\/?robomaker\/srv"),
-                         re.compile("\/?gazebo")]
+keeping_node_default_patterns = [re.compile("\/?rosout"), re.compile("\/?rviz.*"), re.compile("\/?robomaker\/srv"),re.compile("\/?gazebo")]
 
 rospack = rospkg.RosPack()
 
@@ -53,31 +51,43 @@ def callback(msg):
 
     msg.data : std_msgs/String
     '''
+    global next_mode
+    global current_mode
 
     if not msg.data in mode_list.keys():
         return
-    global next_mode
+    if current_mode == msg.data:
+        return
     next_mode = msg.data
-    rospy.loginfo('next_mode change: %s', next_mode)
+    rospy.loginfo('next_mode: %s', next_mode)
 
 
 if __name__ == '__main__':
     rospy.init_node('launchfile_switcher', log_level=rospy.DEBUG)
-    keeping_node_patterns.append(re.compile(rospy.get_name()))
 
     rospy.Subscriber('mode', String, callback)
 
     while not rospy.is_shutdown():
         rate = rospy.Rate(10)
         if current_mode != next_mode:
+            rospy.loginfo('current_mode:%s next_mode:%s', current_mode, next_mode)
             current_mode = next_mode
-            rospy.loginfo('current_mode:%s next_mode:%s', current_mode,
-                          next_mode)
+
+            config = mode_list[current_mode]
+            launch_configs = config['launch']
 
             # Killing current rosnodes
-
             node_names = rosnode.get_node_names()
             node_names_to_kill = []
+
+            # Merging keeping_node_patterns from yaml config
+            keeping_node_patterns = copy(keeping_node_default_patterns)
+            if 'keeping_node_patterns' in config:
+                for pattern in config['keeping_node_patterns']:
+                    r = re.compile(pattern)
+                    keeping_node_patterns.append(re.compile(pattern))
+            keeping_node_patterns.append(re.compile(rospy.get_name()))
+
             for node_name in node_names:
                 is_killed = True
                 for pattern in keeping_node_patterns:
@@ -90,10 +100,6 @@ if __name__ == '__main__':
             rosnode.kill_nodes(node_names_to_kill)
 
             # Launch new launchfiles according to the next mode
-
-            config = mode_list[current_mode]
-            launch_configs = config['launch']
-
             for launch_config in launch_configs:
                 launchfile_path = rospack.get_path(launch_config['pkg'
                         ]) + launch_config['file']
