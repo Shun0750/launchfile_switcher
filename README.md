@@ -34,6 +34,8 @@ mode_list:
                   value: single_camera
                 - name: explore
                   value: false
+        keeping_node_patterns:
+            - \/?explore.*
     make_map:
         launch:
             - pkg: your_robot_package
@@ -77,6 +79,21 @@ make_map
     <arg name="explore" value="true"/>
   </include>
 ```
+#### launch
+An array of launchfiles to launch. It consists of pkg, file, args.
+- pkg: The package name that contains the file to start
+- file: Relative path of the launch file to start
+- args: Arrays of arguments of the launch file to start
+
+#### keeping_node_patterns
+An array of node name regular expressions to keep when switching launchfiles. 
+
+##### Default keeping node patterns
+- \/?rosout
+- \/?rviz.*
+- \/?robomaker\/srv
+- \/?gazebo
+
 
 ### Switch launch files
 You can switch launchfile sending mode name topic.
