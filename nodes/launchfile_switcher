@@ -35,15 +35,13 @@ import re
 from copy import copy
 
 mode_list = rospy.get_param('/launchfile_switcher/mode_list')
-keeping_node_default_patterns = [re.compile("\/?rosout"), re.compile("\/?rviz.*"), re.compile("\/?robomaker\/srv"),re.compile("\/?gazebo")]
+keeping_node_default_patterns = [re.compile("\/?rosout"), re.compile("\/?rviz.*"), re.compile("\/?robomaker\/srv"),re.compile("\/?gazebo"),re.compile("\/?robot_state_publisher")]
 
 rospack = rospkg.RosPack()
 
 # global variables
-
 current_mode = ''
-next_mode = rospy.get_param('initial_mode', '')
-
+next_mode = ''
 
 def callback(msg):
     '''
@@ -61,11 +59,13 @@ def callback(msg):
     next_mode = msg.data
     rospy.loginfo('next_mode: %s', next_mode)
 
-
+rospy.loginfo('start')
 if __name__ == '__main__':
     rospy.init_node('launchfile_switcher', log_level=rospy.DEBUG)
+    next_mode = rospy.get_param(rospy.get_name() + '/initial_mode', '')
 
     rospy.Subscriber('mode', String, callback)
+    rospy.loginfo('current_mode:%s next_mode:%s', current_mode, next_mode)
 
     while not rospy.is_shutdown():
         rate = rospy.Rate(10)
