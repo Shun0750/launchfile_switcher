@@ -59,7 +59,6 @@ def callback(msg):
     next_mode = msg.data
     rospy.loginfo('next_mode: %s', next_mode)
 
-rospy.loginfo('start')
 if __name__ == '__main__':
     rospy.init_node('launchfile_switcher', log_level=rospy.DEBUG)
     next_mode = rospy.get_param(rospy.get_name() + '/initial_mode', '')
