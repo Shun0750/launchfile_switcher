@@ -105,12 +105,14 @@ if __name__ == '__main__':
                         False)
                 roslaunch.configure_logging(uuid)
 
-                args_list = launch_config['args']
-                args = []
-                for arg in args_list:
-                    arg_string = '{0}:={1}'.format(arg['name'],
-                            arg['value'])
-                    args.append(arg_string)
+                # Setting args
+                if 'args' in launch_config:
+                    args_list = launch_config['args']
+                    args = []
+                    for arg in args_list:
+                        arg_string = '{0}:={1}'.format(arg['name'],
+                                arg['value'])
+                        args.append(arg_string)
 
                 launch = roslaunch.parent.ROSLaunchParent(uuid,
                         [(launchfile_path, args)])
