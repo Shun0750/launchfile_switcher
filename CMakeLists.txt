@@ -1,7 +1,7 @@
 ################################################################################
 # Set minimum required version of cmake, project name and compile options
 ################################################################################
-cmake_minimum_required(VERSION 3.0.2)
+cmake_minimum_required(VERSION 3.5)
 project(launchfile_switcher)
 
 ################################################################################
@@ -49,4 +49,3 @@ catkin_install_python(PROGRAMS
 #############
 ## Testing ##
 #############
-
