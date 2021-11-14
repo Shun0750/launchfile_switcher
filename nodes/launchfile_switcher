@@ -35,13 +35,15 @@ import re
 from copy import copy
 
 mode_list = rospy.get_param('/launchfile_switcher/mode_list')
-keeping_node_default_patterns = [re.compile("\/?rosout"), re.compile("\/?rviz.*"), re.compile("\/?robomaker\/srv"),re.compile("\/?gazebo"),re.compile("\/?robot_state_publisher")]
+keeping_node_default_patterns = [re.compile("\/?rosout"), re.compile("\/?rviz.*"), re.compile(
+    "\/?robomaker\/srv"), re.compile("\/?gazebo"), re.compile("\/?robot_state_publisher")]
 
 rospack = rospkg.RosPack()
 
 # global variables
 current_mode = ''
 next_mode = ''
+
 
 def callback(msg):
     '''
@@ -59,9 +61,10 @@ def callback(msg):
     next_mode = msg.data
     rospy.loginfo('next_mode: %s', next_mode)
 
+
 if __name__ == '__main__':
     rospy.init_node('launchfile_switcher', log_level=rospy.DEBUG)
-    next_mode = rospy.get_param(rospy.get_name() + '/initial_mode', '') # setting initial mode
+    next_mode = rospy.get_param(rospy.get_name() + '/initial_mode', '')  # setting initial mode
 
     rospy.Subscriber('mode', String, callback)
 
@@ -100,9 +103,9 @@ if __name__ == '__main__':
             # Launch new launchfiles according to the next mode
             for launch_config in launch_configs:
                 launchfile_path = rospack.get_path(launch_config['pkg'
-                        ]) + launch_config['file']
+                                                                 ]) + launch_config['file']
                 uuid = roslaunch.rlutil.get_or_generate_uuid(None,
-                        False)
+                                                             False)
                 roslaunch.configure_logging(uuid)
 
                 # Setting args
@@ -111,11 +114,11 @@ if __name__ == '__main__':
                     args = []
                     for arg in args_list:
                         arg_string = '{0}:={1}'.format(arg['name'],
-                                arg['value'])
+                                                       arg['value'])
                         args.append(arg_string)
 
                 launch = roslaunch.parent.ROSLaunchParent(uuid,
-                        [(launchfile_path, args)])
+                                                          [(launchfile_path, args)])
                 launch.start()
 
         rate.sleep()
